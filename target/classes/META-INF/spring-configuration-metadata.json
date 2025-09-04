@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "microservice.url",
+      "type": "com.cows.config.MicroServiceUrl",
+      "sourceType": "com.cows.config.MicroServiceUrl"
+    }
+  ],
+  "properties": [
+    {
+      "name": "microservice.url.order-url",
+      "type": "java.lang.String",
+      "sourceType": "com.cows.config.MicroServiceUrl"
+    },
+    {
+      "name": "microservice.url.shopping-url",
+      "type": "java.lang.String",
+      "sourceType": "com.cows.config.MicroServiceUrl"
+    },
+    {
+      "name": "microservice.url.user-url",
+      "type": "java.lang.String",
+      "sourceType": "com.cows.config.MicroServiceUrl"
+    }
+  ],
+  "hints": []
+}

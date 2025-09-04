@@ -1,0 +1,19 @@
+# 项目
+app:
+  id: company-official-website-server
+  name: company-official-website-server
+  author: liyinchi
+  email: liyinchi@qq.com
+  github: https://github.com/liyinchigithub/company_official_website_server
+  description: company-official-website-server
+  version: 1.0.4
+
+  # 读取指定环境
+spring:
+  profiles:
+    active: dev  # dev 或者 'prod'，根据您需要的环境
+    
+
+
+
+
