@@ -1,0 +1,16 @@
+# 开发环境配置文件模板
+# 将此文件复制为 application-dev.properties 并填入实际值
+
+# 数据库配置
+spring.datasource.url=jdbc:mysql://127.0.0.1:3306/springBootTest
+spring.datasource.username=root
+spring.datasource.password=YOUR_PASSWORD_HERE
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.main.allow-bean-definition-overriding=true
+mybatis.type-handlers-package=com.cows.handler
+
+# 阿里云OSS配置 - 完整配置，需要填入实际值
+aliyun.oss.endpoint=oss-cn-shenzhen.aliyuncs.com
+aliyun.oss.bucket-name=lptimage
+aliyun.oss.access-key-id=YOUR_ACCESS_KEY_ID
+aliyun.oss.access-key-secret=YOUR_ACCESS_KEY_SECRET

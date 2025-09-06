@@ -60,6 +60,7 @@
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/service/AboutService.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/serviceImpl/UserServiceImpl.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/controller/common/TestController.java
+/Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/service/OssService.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/consumer/ActiveMqQueueConsumer.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/service/CarouselService.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/entity/ProductsCarousels.java
@@ -104,9 +105,11 @@
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/config/AppConfig.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/entity/LbsInfo.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/handler/MyWebSocketHandler.java
+/Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/controller/common/OssController.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/handler/IntArrayTypeHandler.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/commons/api/JsonResult.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/controller/common/LoginController.java
+/Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/OssTestMain.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/util/JwtUtil.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/util/MybatisGenerator.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/exception/BusinessMsgEnum.java
@@ -123,6 +126,7 @@
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/dto/UpdateUserResponseDTO.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/service/BrandService.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/mapper/UserMapper.java
+/Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/config/OssConfig.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/exception/GlobalExceptionHandler.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/config/MvcConfig.java
 /Users/mac/Desktop/claude-project/company_official_website_server/src/main/java/com/cows/Application.java
