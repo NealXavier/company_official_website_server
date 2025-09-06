@@ -1,3 +1,23 @@
 .DS_Store
 Log/
 *.log
+
+# Build and compiled files
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# 实际配置文件（不提交到仓库）
+application-dev.properties
+application-prod.properties
+application-local.properties
+
+# 但保留模板文件（!表示不忽略）
+!application-dev.properties.template

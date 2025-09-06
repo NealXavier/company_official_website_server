@@ -5,7 +5,7 @@
         SELECT * FROM Carousels WHERE id = #{id}
     </select>
     <select id="findAllCarousels" resultType="com.cows.entity.Carousel">
-        SELECT * FROM Carousels WHERE isDeleted = false 
+        SELECT * FROM Carousels WHERE isDeleted = 0 
         <!-- ORDER BY `order` ASC -->
     </select>
      <insert id="insertCarousel" parameterType="com.cows.entity.Carousel">

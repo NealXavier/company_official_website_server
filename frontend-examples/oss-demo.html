@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSS文件管理演示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1, h2 {
+            color: #333;
+        }
+        
+        .button-group {
+            margin: 20px 0;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            color: #007bff;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .success {
+            color: #155724;
+            background-color: #d4edda;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .file-list {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .file-item {
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+            word-break: break-all;
+        }
+        
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        
+        .preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .file-info {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        
+        input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+            width: 300px;
+        }
+        
+        .log-output {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>OSS文件管理演示</h1>
+        <p>这个页面演示了如何使用JavaScript调用OSS API接口</p>
+    </div>
+
+    <div class="container">
+        <h2>文件列表</h2>
+        <div class="button-group">
+            <button onclick="loadAllFiles()">加载所有文件</button>
+            <button onclick="loadImageFiles()">加载图片文件</button>
+            <input type="text" id="prefix-input" placeholder="输入文件前缀，如: images/">
+            <button onclick="loadFilesByPrefix()">按前缀加载</button>
+        </div>
+        <div id="file-list-container"></div>
+    </div>
+
+    <div class="container">
+        <h2>文件预览</h2>
+        <div class="button-group">
+            <input type="text" id="preview-input" placeholder="输入文件key，如: example.jpg">
+            <button onclick="generatePreview()">生成预览URL</button>
+            <button onclick="displayPreview()">显示预览</button>
+        </div>
+        <div id="preview-result"></div>
+        <div id="preview-container" class="preview-container"></div>
+    </div>
+
+    <div class="container">
+        <h2>文件信息</h2>
+        <div class="button-group">
+            <input type="text" id="file-info-input" placeholder="输入文件key，如: example.jpg">
+            <button onclick="getFileInfo()">获取文件信息</button>
+        </div>
+        <div id="file-info-result"></div>
+    </div>
+
+    <div class="container">
+        <h2>批量操作</h2>
+        <div class="button-group">
+            <button onclick="batchGeneratePreviews()">批量生成预览URL</button>
+            <button onclick="batchDisplayImages()">批量显示图片</button>
+        </div>
+        <div id="batch-result"></div>
+        <div id="batch-container" class="preview-container"></div>
+    </div>
+
+    <div class="container">
+        <h2>日志输出</h2>
+        <button onclick="clearLog()">清空日志</button>
+        <div id="log-output" class="log-output"></div>
+    </div>
+
+    <script src="../oss-sdk-v1.js"></script>
+    <script>
+        // 日志输出函数
+        function log(message, type = 'info') {
+            const logOutput = document.getElementById('log-output');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.style.color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#ffffff';
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logOutput.appendChild(logEntry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+
+        // 显示加载状态
+        function showLoading(containerId, message = '加载中...') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="loading">${message}</div>`;
+        }
+
+        // 显示错误信息
+        function showError(containerId, error) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="error">错误: ${error}</div>`;
+            log(`错误: ${error}`, 'error');
+        }
+
+        // 显示成功信息
+        function showSuccess(containerId, message) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="success">成功: ${message}</div>`;
+            log(message, 'success');
+        }
+
+        // 加载所有文件
+        async function loadAllFiles() {
+            showLoading('file-list-container', '正在加载所有文件...');
+            try {
+                const files = await OssSDK.getAllOsss();
+                displayFileList(files, 'file-list-container');
+                log(`成功加载 ${files.length} 个文件`, 'success');
+            } catch (error) {
+                showError('file-list-container', error.message);
+            }
+        }
+
+        // 加载图片文件
+        async function loadImageFiles() {
+            showLoading('file-list-container', '正在加载图片文件...');
+            try {
+                const files = await OssSDK.getOsssByPrefix('images/');
+                displayFileList(files, 'file-list-container');
+                log(`成功加载 ${files.length} 个图片文件`, 'success');
+            } catch (error) {
+                showError('file-list-container', error.message);
+            }
+        }
+
+        // 按前缀加载文件
+        async function loadFilesByPrefix() {
+            const prefix = document.getElementById('prefix-input').value.trim();
+            if (!prefix) {
+                alert('请输入文件前缀');
+                return;
+            }
+            
+            showLoading('file-list-container', `正在加载前缀为 "${prefix}" 的文件...`);
+            try {
+                const files = await OssSDK.getOsssByPrefix(prefix);
+                displayFileList(files, 'file-list-container');
+                log(`成功加载 ${files.length} 个前缀为 "${prefix}" 的文件`, 'success');
+            } catch (error) {
+                showError('file-list-container', error.message);
+            }
+        }
+
+        // 显示文件列表
+        function displayFileList(files, containerId) {
+            const container = document.getElementById(containerId);
+            if (files.length === 0) {
+                container.innerHTML = '<div class="success">没有找到文件</div>';
+                return;
+            }
+
+            let html = '<div class="file-list">';
+            files.forEach((file, index) => {
+                html += `<div class="file-item">${index + 1}. ${file}</div>`;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // 生成预览URL
+        async function generatePreview() {
+            const objectKey = document.getElementById('preview-input').value.trim();
+            if (!objectKey) {
+                alert('请输入文件key');
+                return;
+            }
+
+            showLoading('preview-result', '正在生成预览URL...');
+            try {
+                const previewUrl = await OssSDK.generatePreviewUrl(objectKey);
+                const resultContainer = document.getElementById('preview-result');
+                resultContainer.innerHTML = `
+                    <div class="success">预览URL生成成功</div>
+                    <div class="file-info">
+                        <strong>文件key:</strong> ${objectKey}<br>
+                        <strong>预览URL:</strong> <a href="${previewUrl}" target="_blank">${previewUrl}</a>
+                    </div>
+                `;
+                log(`成功生成文件 "${objectKey}" 的预览URL`, 'success');
+            } catch (error) {
+                showError('preview-result', error.message);
+            }
+        }
+
+        // 显示预览
+        async function displayPreview() {
+            const objectKey = document.getElementById('preview-input').value.trim();
+            if (!objectKey) {
+                alert('请输入文件key');
+                return;
+            }
+
+            showLoading('preview-result', '正在显示预览...');
+            try {
+                const previewUrl = await OssSDK.generatePreviewUrl(objectKey);
+                const container = document.getElementById('preview-container');
+                
+                // 判断文件类型
+                const extension = objectKey.split('.').pop().toLowerCase();
+                let previewHtml = '';
+                
+                if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(extension)) {
+                    previewHtml = `<img src="${previewUrl}" alt="${objectKey}" class="preview-image">`;
+                } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
+                    previewHtml = `
+                        <video controls class="preview-image">
+                            <source src="${previewUrl}" type="video/${extension}">
+                            您的浏览器不支持视频播放。
+                        </video>
+                    `;
+                } else if (['mp3', 'wav', 'ogg'].includes(extension)) {
+                    previewHtml = `
+                        <audio controls>
+                            <source src="${previewUrl}" type="audio/${extension}">
+                            您的浏览器不支持音频播放。
+                        </audio>
+                    `;
+                } else {
+                    previewHtml = `
+                        <div class="file-info">
+                            文件类型不支持直接预览，请使用预览URL查看：<br>
+                            <a href="${previewUrl}" target="_blank">${previewUrl}</a>
+                        </div>
+                    `;
+                }
+                
+                container.innerHTML = previewHtml;
+                showSuccess('preview-result', '预览显示成功');
+            } catch (error) {
+                showError('preview-result', error.message);
+            }
+        }
+
+        // 获取文件信息
+        async function getFileInfo() {
+            const objectKey = document.getElementById('file-info-input').value.trim();
+            if (!objectKey) {
+                alert('请输入文件key');
+                return;
+            }
+
+            showLoading('file-info-result', '正在获取文件信息...');
+            try {
+                const fileInfo = await OssSDK.getOssInfoByKey(objectKey);
+                const resultContainer = document.getElementById('file-info-result');
+                
+                let infoHtml = '<div class="success">文件信息获取成功</div><div class="file-info">';
+                for (const [key, value] of Object.entries(fileInfo)) {
+                    infoHtml += `<strong>${key}:</strong> ${value}<br>`;
+                }
+                infoHtml += '</div>';
+                
+                resultContainer.innerHTML = infoHtml;
+                log(`成功获取文件 "${objectKey}" 的信息`, 'success');
+            } catch (error) {
+                showError('file-info-result', error.message);
+            }
+        }
+
+        // 批量生成预览URL
+        async function batchGeneratePreviews() {
+            // 这里使用示例文件key，实际使用时应该从文件列表中获取
+            const sampleKeys = ['example1.jpg', 'example2.png', 'example3.gif'];
+            
+            showLoading('batch-result', '正在批量生成预览URL...');
+            try {
+                const previewUrls = await OssSDK.batchGeneratePreviewUrls(sampleKeys);
+                const resultContainer = document.getElementById('batch-result');
+                resultContainer.innerHTML = `<div class="success">成功生成 ${previewUrls.length} 个预览URL</div>`;
+                log(`成功批量生成 ${previewUrls.length} 个预览URL`, 'success');
+            } catch (error) {
+                showError('batch-result', error.message);
+            }
+        }
+
+        // 批量显示图片
+        async function batchDisplayImages() {
+            // 这里使用示例文件key，实际使用时应该从文件列表中获取
+            const sampleKeys = ['example1.jpg', 'example2.png', 'example3.gif'];
+            
+            showLoading('batch-result', '正在批量显示图片...');
+            try {
+                const previewUrls = await OssSDK.batchGeneratePreviewUrls(sampleKeys);
+                const container = document.getElementById('batch-container');
+                container.innerHTML = '';
+                previewUrls.forEach((url, index) => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.style.maxWidth = '200px';
+                    img.style.margin = '10px';
+                    img.alt = `图片 ${index + 1}`;
+                    container.appendChild(img);
+                });
+                showSuccess('batch-result', '批量图片显示成功');
+            } catch (error) {
+                showError('batch-result', error.message);
+            }
+        }
+
+        // 清空日志
+        function clearLog() {
+            document.getElementById('log-output').innerHTML = '';
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('OSS API演示页面已加载完成');
+            log('可用的API功能：文件列表、预览URL生成、文件信息获取、批量操作');
+        });
+    </script>
+</body>
+</html>

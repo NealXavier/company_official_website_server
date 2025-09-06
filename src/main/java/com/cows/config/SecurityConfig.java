@@ -44,6 +44,7 @@ public class SecurityConfig {
                                  "/login/perform_login", "/v1/users/addUser", "/wechatLogin.html", 
                                  "/login/wechat/verify", "/location", "/test.png", 
                                  "/files/**",
+                                 "/v1/osss/**",  // OSS API路径放行 - 修改为新的统一命名风格
                                  "/v1/getLatestImage",
                                  "/v1/productCategories/getAllProductCategories", 
                                  "/v1/productsCarousels/getAllProductsCarousels", 
