@@ -52,7 +52,7 @@ public class SecurityConfig {
                                  "/v1/products/getAllProductsCarousels", 
                                  "/MP_verify_tSDyEHEKTxbBXHMd.txt", "/v1/admins/login", 
                                  "/v1/basicInformation/getAllBasicInformation", 
-                                 "/v1/carousels/getAllCarousels", 
+                                 "/v1/carousels/getAllCarousels",
                                  "/v1/products/getAllProducts", 
                                  "/v1/products/getProductById/*",
                                  "/v1/businesses/getBusinessById/1",
