@@ -1,3 +1,5 @@
+-- springBootTest.About definition
+
 CREATE TABLE `About` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `imageUrl` varchar(255) NOT NULL,
@@ -6,7 +8,10 @@ CREATE TABLE `About` (
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.Admins definition
 
 CREATE TABLE `Admins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -19,10 +24,13 @@ CREATE TABLE `Admins` (
   `isDeleted` tinyint(1) DEFAULT '0',
   `isEnable` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.BasicInformation definition
 
 CREATE TABLE `BasicInformation` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `phone` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
   `address` varchar(255) NOT NULL,
@@ -35,10 +43,13 @@ CREATE TABLE `BasicInformation` (
   `isEnable` tinyint(1) DEFAULT '1',
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `homeTitle` varchar(255) DEFAULT NULL,
-  `homeDescription` text,
+  `homeTitle` varchar(20) DEFAULT NULL,
+  `homeDescription` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.BrandAuthorizationCertificates definition
 
 CREATE TABLE `BrandAuthorizationCertificates` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -49,7 +60,10 @@ CREATE TABLE `BrandAuthorizationCertificates` (
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `isDeleted` tinyint(1) DEFAULT '0' COMMENT '是否删除',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+
+
+-- springBootTest.Brands definition
 
 CREATE TABLE `Brands` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -60,7 +74,10 @@ CREATE TABLE `Brands` (
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.Businesses definition
 
 CREATE TABLE `Businesses` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -71,20 +88,52 @@ CREATE TABLE `Businesses` (
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.Carousels definition
 
 CREATE TABLE `Carousels` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) DEFAULT NULL,
-  `order` int(11) DEFAULT '0',
   `imageUrl` varchar(255) NOT NULL,
   `redirectUrl` varchar(255) DEFAULT NULL,
   `isEnabled` tinyint(1) DEFAULT '1',
   `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `isDeleted` tinyint(1) DEFAULT '0',
+  `title` varchar(20) DEFAULT NULL,
+  `order` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.ProductCategories definition
+
+CREATE TABLE `ProductCategories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品分类ID',
+  `name` varchar(255) NOT NULL COMMENT '商品分类名称',
+  `description` text COMMENT '商品分类描述',
+  `isEnabled` tinyint(1) DEFAULT '1' COMMENT '启用禁用状态',
+  `isDeleted` tinyint(1) DEFAULT '0' COMMENT '是否删除',
+  `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='商品分类表';
+
+
+-- springBootTest.ProductsCarousels definition
+
+CREATE TABLE `ProductsCarousels` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `products` json NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `isDeleted` tinyint(1) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.`User` definition
 
 CREATE TABLE `User` (
   `id` int(100) NOT NULL AUTO_INCREMENT,
@@ -92,10 +141,13 @@ CREATE TABLE `User` (
   `password` varchar(100) DEFAULT NULL,
   `created` datetime DEFAULT CURRENT_TIMESTAMP,
   `isEnable` tinyint(1) DEFAULT '1',
-  `wechat_openid` varchar(255) DEFAULT NULL,
   `isDeleted` tinyint(1) DEFAULT '0',
+  `wechat_openid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=485 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=473 DEFAULT CHARSET=utf8;
+
+
+-- springBootTest.Orders definition
 
 CREATE TABLE `Orders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -107,18 +159,10 @@ CREATE TABLE `Orders` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `Orders_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `User` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `ProductCategories` (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品分类ID',
-  `name` varchar(255) NOT NULL COMMENT '商品分类名称',
-  `description` text COMMENT '商品分类描述',
-  `isEnabled` tinyint(1) DEFAULT '1' COMMENT '启用禁用状态',
-  `isDeleted` tinyint(1) DEFAULT '0' COMMENT '是否删除',
-  `updateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COMMENT='商品分类表'
+
+-- springBootTest.Products definition
 
 CREATE TABLE `Products` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
@@ -138,7 +182,10 @@ CREATE TABLE `Products` (
   PRIMARY KEY (`id`),
   KEY `categoryId` (`categoryId`),
   CONSTRAINT `Products_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `ProductCategories` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COMMENT='商品信息表'
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COMMENT='商品信息表';
+
+
+-- springBootTest.user_location definition
 
 CREATE TABLE `user_location` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -151,4 +198,4 @@ CREATE TABLE `user_location` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `user_location_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
