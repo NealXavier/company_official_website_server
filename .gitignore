@@ -2,12 +2,16 @@
 Log/
 *.log
 
+/upload
+
+
 # Build and compiled files
 target/
 *.class
 *.jar
 *.war
 *.ear
+
 
 # IDE files
 .vscode/
