@@ -9,7 +9,7 @@ import org.springframework.cache.annotation.EnableCaching;
 @Slf4j
 @EnableCaching
 @MapperScan("com.cows.mapper")
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.cows", "com.other"})
 public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);

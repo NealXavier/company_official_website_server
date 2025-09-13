@@ -7,7 +7,7 @@ app:
   id: platform
 
 cors:
-  allowed-origins: http://81.71.17.188:9000,http://localhost:9000
+  allowed-origins: # 前端服务IP
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为80
@@ -106,12 +106,12 @@ springdoc:
     enabled: true
 
 # 阿里云
-#aliyun:
-#  oss:
-#    endpoint: <your-oss-endpoint>
-#    accessKeyId: <your-access-key-id>
-#    accessKeySecret: <your-access-key-secret>
-#    bucketName: <your-bucket-name>
+aliyun:
+  oss:
+    endpoint: # <your-oss-endpoint>
+    accessKeyId: # <your-access-key-id>
+    accessKeySecret: #<your-access-key-secret>
+    bucketName: #<your-bucket-name>
 
 
 #redis相关配置
@@ -123,23 +123,26 @@ spring:
       - classpath:/media/
   # 配置Mybatis
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/springBootTest
+    url: # jdbc:mysql://[公网 IP]:3306/springBootTest
     username: root
     password: lyc123456
     driver-class-name: com.mysql.cj.jdbc.Driver
   #  配置ActiveMQ
   activemq:
     # activemq url
-    broker-url: tcp://localhost:61616
+    broker-url: # tcp://[公网 IP]:61616
     in-memory: true
     pool:
       # 如果此处设置为true，需要添加activemq-pool的依赖包，否则会自动配置失败，无法注入JmsMessagingTemplate
       enabled: false
+    # 添加超时配置
+    send-timeout: 60000
+    close-timeout: 60000
   #  配置RocketMQ
-  rocketmq:
-    name-server: 127.0.0.1:9876
-    producer:
-      group: my-producer-group
+  # rocketmq:
+  #   name-server: 127.0.0.1:9876
+  #   producer:
+  #     group: my-producer-group
   # jms
   jms:
     pub-sub-domain: true #   默认情况下，JMS消息队列模型是点对点模型，如果设置为true，则变成发布订阅模型
