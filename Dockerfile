@@ -14,7 +14,7 @@ RUN mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backu
 #     yum install -y java-1.8.0-openjdk-devel mysql-server nginx curl && \
 #     yum clean all
 RUN yum update -y && \
-    yum install -y mysql-server nginx curl tar && \
+    yum install -y mysql-server nginx curl tar initscripts && \
     yum clean all
 
 RUN curl -fSL -o /tmp/openjdk-17.tar.gz "https://download.oracle.com/java/17/archive/jdk-17.0.12_linux-x64_bin.tar.gz" && \
@@ -64,6 +64,12 @@ RUN mvn clean package
 EXPOSE 8080
 
 # 启动MySQL和Nginx
-CMD service mysqld start && \
-    service nginx start && \
-    java -jar target/your-app.jar
+CMD \
+    # 初始化 MySQL（首次启动必需）
+    if [ ! -d /var/lib/mysql/mysql ]; then mysqld --initialize-insecure; fi && \
+    # 直接启动 MySQL（后台运行，& 表示后台）
+    /usr/sbin/mysqld & \
+    # 直接启动 Nginx（后台运行）
+    /usr/sbin/nginx & \
+    # 启动 Java 服务（前台运行，作为容器主进程）
+    java -jar target/back_server-0.0.1-SNAPSHOT.jar
