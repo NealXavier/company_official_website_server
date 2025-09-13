@@ -13,6 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -28,6 +31,8 @@ import java.time.format.DateTimeFormatter;
 @Tag(name = "文件上传")
 public class UploadController {
     private static final String UPLOAD_DIR = "./upload";
+    // 存储文件名映射关系：storageName -> originalName
+    private static final Map<String, String> FILE_NAME_MAPPING = new HashMap<>();
 
     @PostMapping("/upload")
     public BaseResponse<String> handleFileUpload(@RequestParam("file") MultipartFile file, @RequestParam("userId") String userId) {
@@ -43,7 +48,9 @@ public class UploadController {
         }
 
         String originalFilename = file.getOriginalFilename();
-        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        // 对原始文件名进行安全处理，移除可能导致文件系统错误的字符
+        String safeOriginalFilename = originalFilename.replaceAll("[^\\w.-]", "_");
+        String fileExtension = safeOriginalFilename.substring(safeOriginalFilename.lastIndexOf(".") + 1);
         // 限制上传文件大小
         if (file.getSize() > 1024 * 1024 * 5) {
             return new BaseResponse<>(1, "File size too large", null);
@@ -53,19 +60,37 @@ public class UploadController {
             return new BaseResponse<>(1, "Invalid file format", null);
         }
 
-        // Rename the file
+        // 双文件名策略：storageName用于文件系统存储，displayName用于前端展示
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        String newFilename = userId + "_" + timestamp + "_" + originalFilename;
+        String storageName = userId + "_" + timestamp + "_" + UUID.randomUUID() + "." + fileExtension; // 安全存储名
+        String displayName = originalFilename; // 原始展示名
 
-        // Save the file to the server
-        Path filePath = Paths.get(UPLOAD_DIR, newFilename);
+        // 保存文件映射关系
+        FILE_NAME_MAPPING.put(storageName, displayName);
+        log.info("File upload mapping - storageName: {}, displayName: {}", storageName, displayName);
+
+        // Save the file to the server using storageName
+        Path filePath = Paths.get(UPLOAD_DIR, storageName);
         try {
             Files.write(filePath, file.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Failed to save file: {}", storageName, e);
+            FILE_NAME_MAPPING.remove(storageName); // 清理映射关系
             return new BaseResponse<>(1, "Failed to save file", null);
         }
 
-        return new BaseResponse<>(0, "File uploaded successfully", newFilename);
+        return new BaseResponse<>(0, "File uploaded successfully", storageName);
+    }
+
+    /**
+     * 获取文件的原始展示名称
+     */
+    @GetMapping("/getDisplayName")
+    public BaseResponse<String> getDisplayName(@RequestParam("storageName") String storageName) {
+        String displayName = FILE_NAME_MAPPING.get(storageName);
+        if (displayName == null) {
+            return new BaseResponse<>(1, "File not found", null);
+        }
+        return new BaseResponse<>(0, "Success", displayName);
     }
 }
